@@ -24,6 +24,11 @@ public class Reservacion
     [Required]
     public int IdEstadoReservacion { get; set; }
 
+    [Required]
+    public int IdUsuarioCreacion { get; set; }
+
+    public int? IdUsuarioUltimaModificacion { get; set; }
+
     [DataType(DataType.Date)]
     public DateOnly FechaEvento { get; set; }
 
@@ -39,12 +44,17 @@ public class Reservacion
     [Range(typeof(decimal), "0", "9999999999.99")]
     public decimal Total { get; set; }
 
+    [StringLength(500)]
+    public string? Observaciones { get; set; }
+
     public DateTime FechaRegistro { get; set; } = DateTime.Now;
 
     public Cliente? Cliente { get; set; }
     public Salon? Salon { get; set; }
     public TipoEvento? TipoEvento { get; set; }
     public EstadoReservacion? EstadoReservacion { get; set; }
+    public Usuario? UsuarioCreacion { get; set; }
+    public Usuario? UsuarioUltimaModificacion { get; set; }
     public ICollection<ReservacionServicio> Servicios { get; set; } = [];
     public ICollection<ReservacionEquipo> Equipos { get; set; } = [];
 }

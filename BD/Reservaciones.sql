@@ -20,8 +20,8 @@ CREATE TABLE Roles(
 CREATE TABLE Usuarios(
     IdUsuario INT IDENTITY(1,1) PRIMARY KEY,
 
-    Usuario VARCHAR(50) NOT NULL UNIQUE,
-    Clave VARCHAR(255) NOT NULL,
+    NombreUsuario VARCHAR(50) NOT NULL UNIQUE,
+    ClaveHash VARCHAR(255) NOT NULL,
 
     Activo BIT NOT NULL DEFAULT 1,
 
@@ -63,6 +63,8 @@ CREATE TABLE Bitacora(
 CREATE TABLE Clientes(
     IdCliente INT IDENTITY(1,1) PRIMARY KEY,
 
+    IdUsuario INT NOT NULL,
+
     Cedula VARCHAR(20) NOT NULL UNIQUE,
 
     Nombres VARCHAR(100) NOT NULL,
@@ -75,7 +77,43 @@ CREATE TABLE Clientes(
 
     Activo BIT NOT NULL DEFAULT 1,
 
-    FechaCreacion DATETIME NOT NULL DEFAULT GETDATE()
+    FechaCreacion DATETIME NOT NULL DEFAULT GETDATE(),
+
+    CONSTRAINT UQ_Clientes_IdUsuario
+        UNIQUE(IdUsuario),
+
+    FOREIGN KEY(IdUsuario)
+        REFERENCES Usuarios(IdUsuario)
+);
+
+/*=========================================
+  EMPLEADOS
+=========================================*/
+CREATE TABLE Empleados(
+    IdEmpleado INT IDENTITY(1,1) PRIMARY KEY,
+
+    IdUsuario INT NOT NULL,
+
+    Cedula VARCHAR(20) NOT NULL UNIQUE,
+
+    Nombres VARCHAR(100) NOT NULL,
+    Apellidos VARCHAR(100) NOT NULL,
+
+    Telefono VARCHAR(20),
+    Correo VARCHAR(100),
+
+    Cargo VARCHAR(100) NOT NULL,
+
+    Activo BIT NOT NULL DEFAULT 1,
+
+    FechaContratacion DATE NULL,
+    FechaCreacion DATETIME NOT NULL DEFAULT GETDATE(),
+
+    CONSTRAINT UQ_Empleados_IdUsuario
+        UNIQUE(IdUsuario),
+
+    FOREIGN KEY(IdUsuario)
+        REFERENCES Usuarios(IdUsuario)
 );
 
 /*=========================================
@@ -282,6 +320,8 @@ CREATE TABLE Reservaciones(
     IdSalon INT NOT NULL,
     IdTipoEvento INT NOT NULL,
     IdEstadoReservacion INT NOT NULL,
+    IdUsuarioCreacion INT NOT NULL,
+    IdUsuarioUltimaModificacion INT NULL,
 
     FechaEvento DATE NOT NULL,
 
@@ -293,6 +333,8 @@ CREATE TABLE Reservaciones(
 
     Total DECIMAL(12,2) NOT NULL
         CHECK(Total >= 0),
+
+    Observaciones VARCHAR(500),
 
     FechaRegistro DATETIME DEFAULT GETDATE(),
 
@@ -311,8 +353,18 @@ CREATE TABLE Reservaciones(
         REFERENCES TiposEvento(IdTipoEvento),
 
     FOREIGN KEY(IdEstadoReservacion)
-        REFERENCES EstadosReservacion(IdEstadoReservacion)
+        REFERENCES EstadosReservacion(IdEstadoReservacion),
+
+    FOREIGN KEY(IdUsuarioCreacion)
+        REFERENCES Usuarios(IdUsuario),
+
+    FOREIGN KEY(IdUsuarioUltimaModificacion)
+        REFERENCES Usuarios(IdUsuario)
 );
+
+CREATE UNIQUE INDEX UX_Reservaciones_AgendaActiva
+    ON Reservaciones(IdSalon, FechaEvento, HoraInicio, HoraFin)
+    WHERE IdEstadoReservacion = 1 OR IdEstadoReservacion = 2;
 
 CREATE TABLE ReservacionServicio(
     IdReservacionServicio INT IDENTITY(1,1) PRIMARY KEY,
@@ -463,14 +515,19 @@ CREATE TABLE HistorialReservacion(
     IdHistorial INT IDENTITY(1,1) PRIMARY KEY,
 
     IdReservacion INT NOT NULL,
+    IdUsuarioCambio INT NOT NULL,
 
     EstadoAnterior VARCHAR(50),
     EstadoNuevo VARCHAR(50),
+    Observacion VARCHAR(500),
 
     FechaCambio DATETIME DEFAULT GETDATE(),
 
     FOREIGN KEY(IdReservacion)
-        REFERENCES Reservaciones(IdReservacion)
+        REFERENCES Reservaciones(IdReservacion),
+
+    FOREIGN KEY(IdUsuarioCambio)
+        REFERENCES Usuarios(IdUsuario)
 );
 
 CREATE TABLE EncuestasSatisfaccion(
@@ -503,4 +560,49 @@ CREATE TABLE Notificaciones(
 
     FOREIGN KEY(IdCliente)
         REFERENCES Clientes(IdCliente)
+);
+
+/*=========================================
+  DATOS INICIALES
+=========================================*/
+INSERT INTO Roles(Nombre, Descripcion)
+VALUES
+    ('Administrador', 'Gestion completa del sistema'),
+    ('Recepcionista', 'Gestion operativa de reservaciones'),
+    ('Cliente', 'Cliente que registra y consulta sus reservaciones');
+
+INSERT INTO EstadosReservacion(Nombre)
+VALUES
+    ('Pendiente'),
+    ('Aprobada'),
+    ('Rechazada'),
+    ('Cancelada'),
+    ('Finalizada');
+
+INSERT INTO Usuarios(NombreUsuario, ClaveHash, IdRol)
+VALUES (
+    'admin',
+    '$2a$12$YWZ.07JsZVUjsDVGPzYh.uIAgd.X5951Fcs/uSPYrEJj6FLDzPfl6',
+    (SELECT IdRol FROM Roles WHERE Nombre = 'Administrador')
+);
+
+INSERT INTO Empleados(
+    IdUsuario,
+    Cedula,
+    Nombres,
+    Apellidos,
+    Telefono,
+    Correo,
+    Cargo,
+    FechaContratacion
+)
+VALUES (
+    (SELECT IdUsuario FROM Usuarios WHERE NombreUsuario = 'admin'),
+    '000-000000-0000A',
+    'Administrador',
+    'Principal',
+    NULL,
+    'admin@salonic.local',
+    'Administrador',
+    CAST(GETDATE() AS DATE)
 );

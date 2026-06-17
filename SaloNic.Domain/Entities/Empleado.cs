@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SaloNic.Domain.Entities;
 
-[Table("Clientes")]
-public class Cliente
+[Table("Empleados")]
+public class Empleado
 {
     [Key]
-    public int IdCliente { get; set; }
+    public int IdEmpleado { get; set; }
 
     [Required]
     public int IdUsuario { get; set; }
@@ -27,14 +27,15 @@ public class Cliente
     [EmailAddress, StringLength(100)]
     public string? Correo { get; set; }
 
-    [StringLength(200)]
-    public string? Direccion { get; set; }
+    [Required, StringLength(100)]
+    public string Cargo { get; set; } = string.Empty;
 
     public bool Activo { get; set; } = true;
+
+    [DataType(DataType.Date)]
+    public DateOnly? FechaContratacion { get; set; }
 
     public DateTime FechaCreacion { get; set; } = DateTime.Now;
 
     public Usuario? Usuario { get; set; }
-    public ICollection<ContactoCliente> Contactos { get; set; } = [];
-    public ICollection<Reservacion> Reservaciones { get; set; } = [];
 }

@@ -13,7 +13,7 @@ public class Usuario
     public string NombreUsuario { get; set; } = string.Empty;
 
     [Required, StringLength(255)]
-    public string Clave { get; set; } = string.Empty;
+    public string ClaveHash { get; set; } = string.Empty;
 
     public bool Activo { get; set; } = true;
 
@@ -25,4 +25,6 @@ public class Usuario
     public int IdRol { get; set; }
 
     public Rol? Rol { get; set; }
+    public Cliente? Cliente { get; set; }
+    public Empleado? Empleado { get; set; }
 }

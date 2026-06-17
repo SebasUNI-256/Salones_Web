@@ -125,15 +125,22 @@ public class HistorialReservacion
     [Required]
     public int IdReservacion { get; set; }
 
+    [Required]
+    public int IdUsuarioCambio { get; set; }
+
     [StringLength(50)]
     public string? EstadoAnterior { get; set; }
 
     [StringLength(50)]
     public string? EstadoNuevo { get; set; }
 
+    [StringLength(500)]
+    public string? Observacion { get; set; }
+
     public DateTime FechaCambio { get; set; } = DateTime.Now;
 
     public Reservacion? Reservacion { get; set; }
+    public Usuario? UsuarioCambio { get; set; }
 }
 
 [Table("EncuestasSatisfaccion")]
