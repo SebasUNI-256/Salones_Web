@@ -1,0 +1,121 @@
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-grid">
+            <div class="hero-copy">
+                <p class="eyebrow">Gestion profesional de eventos</p>
+                <h1>SaloNic</h1>
+                <p class="hero-lead">
+                    Reserva salones con una experiencia clara, sobria y pensada para eventos que necesitan coordinacion precisa.
+                </p>
+                <div class="hero-actions" id="reserva">
+                    <a class="button-primary" href="#salones">Ver espacios</a>
+                    <a class="button-secondary" href="#experiencia">Por que confiar</a>
+                </div>
+            </div>
+            <div class="hero-panel" aria-label="Resumen visual de disponibilidad">
+                <div class="panel-header">
+                    <span>Disponibilidad</span>
+                    <strong>Junio 2026</strong>
+                </div>
+                <div class="availability-list">
+                    <article>
+                        <span class="time">09:00</span>
+                        <div>
+                            <strong>Salon Ejecutivo</strong>
+                            <p>Disponible para reuniones corporativas.</p>
+                        </div>
+                    </article>
+                    <article>
+                        <span class="time">15:00</span>
+                        <div>
+                            <strong>Gran Salon</strong>
+                            <p>Capacidad extendida para celebraciones.</p>
+                        </div>
+                    </article>
+                    <article>
+                        <span class="time">19:00</span>
+                        <div>
+                            <strong>Terraza Norte</strong>
+                            <p>Ambiente reservado para eventos sociales.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="experiencia" class="content-band">
+    <div class="container">
+        <div class="section-heading">
+            <p class="eyebrow">Confianza</p>
+            <h2>Salones preparados para operar con orden y cumplir lo que prometemos.</h2>
+        </div>
+        <div class="feature-grid">
+            <article class="feature-card">
+                <span>01</span>
+                <h3>Atencion clara</h3>
+                <p>Le orientamos segun capacidad, tipo de evento y horario para que reserve con seguridad desde el inicio.</p>
+            </article>
+            <article class="feature-card">
+                <span>02</span>
+                <h3>Montaje cuidado</h3>
+                <p>Cada espacio se prepara con orden, limpieza y una presentacion coherente con el ambiente que usted espera.</p>
+            </article>
+            <article class="feature-card">
+                <span>03</span>
+                <h3>Compromiso real</h3>
+                <p>Trabajamos para que el salon reservado se vea listo, funcional y a la altura de una celebracion importante.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section id="salones" class="trust-section">
+    <div class="container">
+        <div class="trust-intro">
+            <p class="eyebrow">Salones</p>
+            <h2>Despreocupese de los detalles. En SaloNic ajustamos cada salon a su celebracion.</h2>
+            <p>
+                Le acompanamos desde la eleccion del espacio hasta la preparacion del ambiente, cuidando capacidad,
+                montaje, decoracion y comodidad para que su evento se sienta bien organizado desde el primer momento.
+            </p>
+        </div>
+
+        <div class="salon-showcase" aria-label="Vistas previas de salones disponibles">
+            <article class="salon-preview">
+                <img src="~/images/salon-cumpleanos.png" alt="Salon elegante decorado para cumpleanos" />
+                <div class="salon-copy">
+                    <span>Salon Aurora</span>
+                    <h3>Cumpleanos elegantes</h3>
+                    <p>Perfecto para celebraciones familiares, mesas ordenadas, globos finos y una atmosfera alegre sin perder sobriedad.</p>
+                    <a class="reserve-link" href="#reserva">Reservarlo ya</a>
+                </div>
+            </article>
+
+            <article class="salon-preview salon-preview-alt">
+                <img src="~/images/salon-despedida.png" alt="Salon moderno preparado para despedida de soltero" />
+                <div class="salon-copy">
+                    <span>Salon Nocturne</span>
+                    <h3>Despedidas privadas</h3>
+                    <p>Un espacio moderno, reservado y con iluminacion ambiental para reuniones entre amigos con estilo y control.</p>
+                    <a class="reserve-link" href="#reserva">Reservarlo ya</a>
+                </div>
+            </article>
+
+            <article class="salon-preview">
+                <img src="~/images/salon-graduacion.png" alt="Salon decorado para fiesta de graduacion" />
+                <div class="salon-copy">
+                    <span>Gran Salon Laurea</span>
+                    <h3>Fiestas de graduacion</h3>
+                    <p>Ideal para cerrar una etapa importante con montaje formal, colores sobrios y espacio suficiente para invitados.</p>
+                    <a class="reserve-link" href="#reserva">Reservarlo ya</a>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,39 @@
+# Build
+bin/
+obj/
+out/
+publish/
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio
+.vs/
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# ASP.NET Core
+appsettings.Development.json
+
+# NuGet
+packages/
+*.nupkg
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Test and coverage
+TestResults/
+coverage/
+*.coverage
+*.coveragexml

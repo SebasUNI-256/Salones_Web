@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="SaloNic.Application/SaloNic.Application.csproj" />
+  <Project Path="SaloNic.Domain/SaloNic.Domain.csproj" />
+  <Project Path="SaloNic.Infrastructure/SaloNic.Infrastructure.csproj" />
+  <Project Path="SaloNic.Web/SaloNic.Web.csproj" />
+</Solution>
