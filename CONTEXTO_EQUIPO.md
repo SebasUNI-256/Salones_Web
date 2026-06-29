@@ -1,288 +1,117 @@
-# Contexto del proyecto SaloNic
+# CONTEXTO DEL EQUIPO - SALONIC
 
-Este documento explica la idea del proyecto y como debe dividirse el trabajo. La intencion es que todos trabajen con el mismo criterio y no mezclen responsabilidades entre capas.
+## Objetivo del proyecto
 
-## Objetivo del sistema
+Construir un sistema de reservacion de salones sobre ASP.NET Core MVC, ADO.NET y SQL Server, manteniendo separadas las capas de presentacion, aplicacion, dominio e infraestructura.
 
-SaloNic es un sistema web para reservacion de salones de eventos.
+## Estado real del repositorio
 
-El cliente podra registrarse, iniciar sesion, ver salones disponibles, solicitar reservaciones y consultar sus propias reservaciones.
+Actualmente el proyecto ya no esta solo en fase de estructura inicial.
 
-El personal interno podra gestionar reservaciones. En especial, la recepcionista podra aceptar, rechazar, reprogramar o cancelar reservaciones sin borrarlas. El administrador tendra permisos mas amplios para gestionar usuarios internos, salones, catalogos y reportes.
+Lo que ya existe en el repo:
 
-## Tecnologia base
+- Solucion en 4 capas: `Web`, `Application`, `Domain`, `Infrastructure`
+- Script SQL principal en `BD/Reservaciones.sql`
+- Entidades de dominio para el modelo base
+- DTOs, interfaces y services en `SaloNic.Application`
+- Conexion SQL y repositorios ADO.NET iniciales en `SaloNic.Infrastructure`
+- Landing page inicial en `SaloNic.Web`
 
-- .NET 10
-- ASP.NET Core MVC
-- SQL Server
-- ADO.NET
-- Arquitectura en 4 capas
+Lo que todavia no esta completo:
 
-## Capas del proyecto
+- No todos los repositorios de `Application` tienen implementacion concreta en `Infrastructure`
+- No estan cerrados todos los flujos end-to-end desde vista hasta base de datos
+- La capa web sigue principalmente en estado base
+- Todavia falta aterrizar procedimientos almacenados, validaciones y casos de uso completos
 
-### SaloNic.Domain
+## Alcance realista por rama
 
-Contiene las entidades principales del sistema.
+### `feature/bd-modelo`
 
-Aqui van clases como:
+Responsable de:
 
-- `Usuario`
-- `Rol`
-- `Cliente`
-- `Empleado`
-- `Salon`
-- `Reservacion`
-- `EstadoReservacion`
+- Tablas, relaciones, restricciones y normalizacion
+- Catalogos, llaves foraneas y consistencia del esquema
+- Procedimientos almacenados, vistas o scripts SQL que el sistema necesite
+- Ajustes del archivo `BD/Reservaciones.sql`
 
-Regla: esta capa no debe tener SQL, vistas MVC, controladores ni acceso directo a base de datos.
+No deberia asumir como terminado:
 
-### SaloNic.Application
+- La logica web
+- El cableado de servicios o controladores
 
-Contiene los contratos y la logica de aplicacion.
+### `feature/application-contratos`
 
-Aqui iran:
+Responsable de:
 
-- DTOs
-- interfaces
-- casos de uso
-- validaciones de flujo
+- DTOs de entrada y salida
+- Interfaces de repositorio
+- Services de aplicacion
+- Contratos entre `Web` e `Infrastructure`
 
-Ejemplos futuros:
+Estado actual real:
 
-- `LoginRequest`
-- `ClienteDto`
-- `CrearReservacionRequest`
-- `IReservacionRepository`
-- `IClienteRepository`
-- `IAuthService`
+- Esta rama o area ya va adelantada en cantidad de archivos
+- Hay muchos contratos creados, pero varios todavia dependen de repositorios no implementados
 
-Regla: esta capa no debe implementar ADO.NET ni consultar SQL directamente. Solo define lo que se necesita hacer.
+### `feature/infrastructure-ado`
 
-### SaloNic.Infrastructure
+Responsable de:
 
-Contiene la implementacion tecnica.
+- Conexion a SQL Server
+- Repositorios ADO.NET
+- Ejecucion de procedimientos almacenados
+- Mapeo de resultados de BD hacia entidades
+- Registro en DI de repositorios e infraestructura
 
-Aqui iran:
+Estado actual real:
 
-- repositorios con ADO.NET
-- consultas SQL desde C#
-- conexion a SQL Server
-- implementacion de bcrypt para contrasenas
+- Ya existe `DBConnectionFactory`
+- Ya hay repositorios iniciales implementados
+- Falta completar el resto de repositorios para acompanar los contratos ya creados en `Application`
 
-Regla: esta capa implementa las interfaces definidas en `Application`.
+### `feature/web-mvc`
 
-### SaloNic.Web
+Responsable de:
 
-Contiene la aplicacion MVC.
+- Controladores
+- Vistas Razor
+- Formularios
+- Flujo visual y validaciones del lado MVC
+- Consumo de services de `Application`
 
-Aqui van:
+Estado actual real:
 
-- controladores
-- vistas
-- modelos de vista si hacen falta
-- estilos
-- flujo visual del cliente, recepcionista y administrador
+- La parte web todavia esta bastante base
+- El siguiente avance realista es conectar vistas y controladores con casos de uso que ya existan de verdad
 
-Regla: esta capa no debe tener SQL directo. Debe consumir servicios o casos de uso de `Application`.
+## Orden recomendado de trabajo
 
-## Modelo de usuarios
+Para evitar trabajo fantasma o codigo que no conecta con nada, el orden mas realista es este:
 
-El sistema usara `Usuarios` como tabla central para iniciar sesion.
+1. Definir o ajustar el modelo SQL y los procedimientos necesarios.
+2. Confirmar los contratos de `Application` para esos casos de uso.
+3. Implementar los repositorios reales en `Infrastructure`.
+4. Conectar la capa `Web` solo cuando el flujo backend ya exista.
 
-Cada usuario tendra un rol:
+## Riesgo actual del proyecto
 
-- `Administrador`
-- `Recepcionista`
-- `Cliente`
+El principal riesgo ahora no es la estructura, sino la desalineacion entre capas:
 
-Los clientes tendran datos adicionales en `Clientes`.
+- `Application` ya tiene mucho contrato creado.
+- `Infrastructure` aun no cubre todo ese contrato.
+- `Web` todavia no representa todos los flujos reales del sistema.
 
-Los usuarios internos, como administrador y recepcionista, tendran datos adicionales en `Empleados`.
+Eso significa que el proyecto se puede ver mas avanzado de lo que realmente esta si uno solo mira la cantidad de archivos.
 
-Las contrasenas no se guardaran en texto plano. La columna correcta es `ClaveHash`, pensada para almacenar el hash con bcrypt.
+## Conclusion
 
-## Flujo del cliente
+El alcance del equipo sigue siendo valido como division general por capas, pero ya no es realista describir el proyecto como solo una base inicial.
 
-El cliente debe poder:
+La descripcion honesta hoy es:
 
-- entrar a la pagina
-- registrarse
-- iniciar sesion
-- ver catalogo de salones
-- solicitar una reservacion
-- ver sus reservaciones
-- actualizar su perfil
-
-Una reservacion creada por el cliente debe iniciar como `Pendiente`.
-
-## Flujo de recepcionista
-
-La recepcionista debe poder:
-
-- ver reservaciones pendientes
-- aceptar reservaciones
-- rechazar reservaciones
-- crear reservaciones para clientes presenciales
-- cambiar fecha y hora de una reservacion
-- cancelar reservaciones sin borrarlas
-- consultar calendario de ocupacion
-- agregar observaciones o seguimiento
-
-La recepcionista no debe borrar reservaciones. Solo cambia estados y registra historial.
-
-## Flujo de administrador
-
-El administrador debe poder hacer todo lo de recepcionista y ademas:
-
-- gestionar empleados
-- gestionar usuarios internos
-- gestionar salones
-- gestionar sedes
-- gestionar tipos de salon
-- gestionar tipos de evento
-- gestionar servicios y equipos
-- revisar bitacora
-- ver reportes
-
-## Estados de reservacion
-
-Estados base:
-
-- `Pendiente`
-- `Aprobada`
-- `Rechazada`
-- `Cancelada`
-- `Finalizada`
-
-Regla importante: una reservacion no se elimina. Si ya no aplica, se cambia a `Cancelada` y se registra el motivo.
-
-## Ramas de trabajo
-
-Cada integrante debe trabajar en su rama correspondiente.
-
-### Base de datos
-
-Rama:
-
-```powershell
-git switch feature/bd-modelo
-```
-
-Responsabilidad:
-
-- `BD/Reservaciones.sql`
-- constraints
-- relaciones
-- datos semilla
-- coherencia entre tablas
-
-No debe tocar vistas MVC ni repositorios sin coordinarlo.
-
-### Application
-
-Rama:
-
-```powershell
-git switch feature/application-contratos
-```
-
-Responsabilidad:
-
-- DTOs
-- interfaces
-- contratos
-- estructura de casos de uso
-
-No debe implementar SQL ni ADO.NET.
-
-### Infrastructure
-
-Rama:
-
-```powershell
-git switch feature/infrastructure-ado
-```
-
-Responsabilidad:
-
-- ADO.NET
-- repositorios
-- consultas SQL desde C#
-- implementacion de bcrypt
-- conexion con SQL Server
-
-Debe respetar las interfaces definidas por `Application`.
-
-### Web MVC
-
-Rama:
-
-```powershell
-git switch feature/web-mvc
-```
-
-Responsabilidad:
-
-- controladores
-- vistas
-- landing page
-- pantallas cliente
-- pantallas recepcionista
-- pantallas administrador
-- estilos
-
-No debe consultar SQL directamente.
-
-## Reglas de trabajo en Git
-
-Antes de empezar:
-
-```powershell
-git fetch
-git switch nombre-de-la-rama
-git pull
-```
-
-Antes de subir cambios:
-
-```powershell
-dotnet build .\SaloNic.slnx --no-restore
-git status --short
-git add .
-git commit -m "Mensaje descriptivo en espanol"
-git push
-```
-
-No trabajar directo sobre `main`.
-
-No mezclar cambios de varias capas en un mismo commit si no es necesario.
-
-## Convenciones
-
-- Commits en espanol.
-- Nombres claros.
-- No guardar contrasenas en texto plano.
-- No borrar reservaciones.
-- No meter SQL en controladores.
-- No modificar la capa de otro integrante sin avisar.
-- Si una capa necesita algo de otra, se define primero el contrato.
-
-## Estado actual del proyecto
-
-Ya existe:
-
-- solucion base en 4 capas
-- landing page inicial
-- script SQL principal
-- entidades base de dominio
-- modelo inicial de usuarios, clientes, empleados y reservaciones
-- ramas de trabajo publicadas en GitHub
-
-Falta implementar:
-
-- DTOs y contratos de `Application`
-- repositorios ADO.NET en `Infrastructure`
-- autenticacion real
-- pantallas internas de cliente, recepcionista y administrador
-- logica de reservaciones
-- validaciones completas de disponibilidad
+- La arquitectura ya esta armada.
+- La base de datos ya tiene una estructura importante.
+- `Application` avanzo bastante en contratos.
+- `Infrastructure` va en progreso.
+- `Web` aun esta en etapa inicial de integracion funcional.
