@@ -128,19 +128,26 @@ public class HistorialReservacion
     [Required]
     public int IdUsuarioCambio { get; set; }
 
-    [StringLength(50)]
-    public string? EstadoAnterior { get; set; }
+    public int? IdEstadoAnterior { get; set; }
 
-    [StringLength(50)]
-    public string? EstadoNuevo { get; set; }
+    public int? IdEstadoNuevo { get; set; }
 
     [StringLength(500)]
     public string? Observacion { get; set; }
 
     public DateTime FechaCambio { get; set; } = DateTime.Now;
 
+    [ForeignKey(nameof(IdReservacion))]
     public Reservacion? Reservacion { get; set; }
+
+    [ForeignKey(nameof(IdUsuarioCambio))]
     public Usuario? UsuarioCambio { get; set; }
+
+    [ForeignKey(nameof(IdEstadoAnterior))]
+    public EstadoReservacion? EstadoAnterior { get; set; }
+
+    [ForeignKey(nameof(IdEstadoNuevo))]
+    public EstadoReservacion? EstadoNuevo { get; set; }
 }
 
 [Table("EncuestasSatisfaccion")]
