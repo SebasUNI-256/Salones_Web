@@ -15,6 +15,17 @@ CREATE TABLE Roles(
 );
 
 /*=========================================
+  CARGOS
+=========================================*/
+CREATE TABLE Cargos(
+    IdCargo INT IDENTITY(1,1) PRIMARY KEY,
+
+    Nombre VARCHAR(100) NOT NULL UNIQUE,
+    Descripcion VARCHAR(200),
+    Activo BIT NOT NULL DEFAULT 1
+);
+
+/*=========================================
   USUARIOS
 =========================================*/
 CREATE TABLE Usuarios(
@@ -102,7 +113,7 @@ CREATE TABLE Empleados(
     Telefono VARCHAR(20),
     Correo VARCHAR(100),
 
-    Cargo VARCHAR(100) NOT NULL,
+    IdCargo INT NOT NULL,
 
     Activo BIT NOT NULL DEFAULT 1,
 
@@ -111,6 +122,9 @@ CREATE TABLE Empleados(
 
     CONSTRAINT UQ_Empleados_IdUsuario
         UNIQUE(IdUsuario),
+
+    FOREIGN KEY(IdCargo)
+        REFERENCES Cargos(IdCargo),
 
     FOREIGN KEY(IdUsuario)
         REFERENCES Usuarios(IdUsuario)
@@ -516,15 +530,20 @@ CREATE TABLE HistorialReservacion(
 
     IdReservacion INT NOT NULL,
     IdUsuarioCambio INT NOT NULL,
-
-    EstadoAnterior VARCHAR(50),
-    EstadoNuevo VARCHAR(50),
+    IdEstadoAnterior INT NULL,
+    IdEstadoNuevo INT NULL,
     Observacion VARCHAR(500),
 
     FechaCambio DATETIME DEFAULT GETDATE(),
 
     FOREIGN KEY(IdReservacion)
         REFERENCES Reservaciones(IdReservacion),
+
+    FOREIGN KEY(IdEstadoAnterior)
+        REFERENCES EstadosReservacion(IdEstadoReservacion),
+
+    FOREIGN KEY(IdEstadoNuevo)
+        REFERENCES EstadosReservacion(IdEstadoReservacion),
 
     FOREIGN KEY(IdUsuarioCambio)
         REFERENCES Usuarios(IdUsuario)
@@ -571,6 +590,12 @@ VALUES
     ('Recepcionista', 'Gestion operativa de reservaciones'),
     ('Cliente', 'Cliente que registra y consulta sus reservaciones');
 
+INSERT INTO Cargos(Nombre, Descripcion)
+VALUES
+    ('Administrador General', 'Responsable de la administracion general del sistema'),
+    ('Recepcionista', 'Gestiona la atencion y el registro de reservaciones'),
+    ('Coordinador de Eventos', 'Da seguimiento operativo a la reservacion y al evento');
+
 INSERT INTO EstadosReservacion(Nombre)
 VALUES
     ('Pendiente'),
@@ -593,7 +618,7 @@ INSERT INTO Empleados(
     Apellidos,
     Telefono,
     Correo,
-    Cargo,
+    IdCargo,
     FechaContratacion
 )
 VALUES (
@@ -603,6 +628,6 @@ VALUES (
     'Principal',
     NULL,
     'admin@salonic.local',
-    'Administrador',
+    (SELECT IdCargo FROM Cargos WHERE Nombre = 'Administrador General'),
     CAST(GETDATE() AS DATE)
 );

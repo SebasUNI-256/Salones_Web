@@ -27,8 +27,8 @@ public class Empleado
     [EmailAddress, StringLength(100)]
     public string? Correo { get; set; }
 
-    [Required, StringLength(100)]
-    public string Cargo { get; set; } = string.Empty;
+    [Required]
+    public int IdCargo { get; set; }
 
     public bool Activo { get; set; } = true;
 
@@ -37,5 +37,9 @@ public class Empleado
 
     public DateTime FechaCreacion { get; set; } = DateTime.Now;
 
+    [ForeignKey(nameof(IdUsuario))]
     public Usuario? Usuario { get; set; }
+
+    [ForeignKey(nameof(IdCargo))]
+    public Cargo? Cargo { get; set; }
 }
